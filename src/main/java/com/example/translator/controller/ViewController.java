@@ -5,6 +5,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class ViewController {
     @GetMapping("/")
     public String index() {
-        return "index"; // Имя вашего HTML-шаблона без расширения
+        return "index";
     }
 }
