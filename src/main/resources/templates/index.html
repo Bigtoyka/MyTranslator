@@ -1,20 +1,53 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Translator</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
-<h1>Google Translator</h1>
-<form action="/translate" method="post">
-    <label for="text">Text to translate:</label><br>
-    <input type="text" id="text" name="text"><br><br>
-    <label for="targetLang">Target Language:</label><br>
-    <input type="text" id="targetLang" name="targetLang"><br><br>
-    <input type="submit" value="Translate">
+<h1>Переводчик</h1>
+<form id="translateForm">
+    <label for="source">Исходный язык:</label>
+    <input type="text" id="source" name="source" required>
+
+    <label for="target">Целевой язык:</label>
+    <input type="text" id="target" name="target" required>
+
+    <label for="q">Текст для перевода:</label>
+    <textarea id="q" name="q" required></textarea>
+
+    <button type="submit">Перевести</button>
 </form>
 
-<h2>Translation:</h2>
-<p th:text="${translatedText}"></p>
+<h2>Результат перевода:</h2>
+<div id="result"></div>
+
+<script>
+    $(document).ready(function() {
+        $('#translateForm').on('submit', function(event) {
+            event.preventDefault();
+            const requestData = {
+                source: $('#source').val(),
+                target: $('#target').val(),
+                q: $('#q').val()
+            };
+            $.ajax({
+                url: '/translate',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(requestData),
+                success: function(response) {
+                    $('#result').text(response);
+                },
+                error: function(xhr) {
+                    $('#result').text(xhr.responseText || 'Ошибка при переводе');
+                }
+            });
+        });
+    });
+</script>
 </body>
 </html>
+
