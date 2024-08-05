@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Translator</title>
+</head>
+<body>
+<h1>Google Translator</h1>
+<form action="/translate" method="post">
+    <label for="text">Text to translate:</label><br>
+    <input type="text" id="text" name="text"><br><br>
+    <label for="targetLang">Target Language:</label><br>
+    <input type="text" id="targetLang" name="targetLang"><br><br>
+    <input type="submit" value="Translate">
+</form>
+
+<h2>Translation:</h2>
+<p th:text="${translatedText}"></p>
+</body>
+</html>
