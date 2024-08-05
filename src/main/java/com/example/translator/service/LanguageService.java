@@ -37,82 +37,59 @@ public class LanguageService {
     @Autowired
     public LanguageService(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
-        // Инициализируем список доступных языков при создании экземпляра сервиса
         fetchAvailableLanguages();
     }
 
     @PostConstruct
     private void fetchAvailableLanguages() {
         try {
-            // Получаем список поддерживаемых языков
             this.availableLanguages = getSupportedLanguages();
         } catch (Exception e) {
-            // Логируем ошибку при неудачной попытке получить список языков
             logger.error("Не удалось получить список языков", e);
             this.availableLanguages = new TreeMap<>();
         }
     }
 
     @SneakyThrows
-    // Повторяем при выбросе исключения. До 3-х повторений с увеличивающимся интервалом
     @Retryable(
             retryFor = { Exception.class },
             backoff = @Backoff(delay = 1000, multiplier = 2))
     public TreeMap<String, String> getSupportedLanguages() {
         String target = "en"; // Указываем целевой язык
-
-        // URI с параметрами запроса
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(baseUrl)
                 .queryParam("target", target);
-
         URI uri = builder.build().toUri();
-
-        // Устанавливаем заголовки для запроса
         HttpHeaders headers = new HttpHeaders();
         headers.set("x-rapidapi-host", "google-translator9.p.rapidapi.com");
         headers.set("x-rapidapi-key", rapidApiKey);
-
         HttpEntity<Void> entity = new HttpEntity<>(headers);
-
-        // Выполняем запрос и получаем ответ
         ResponseEntity<String> response = restTemplate.exchange(uri, HttpMethod.GET, entity, String.class);
         String responseBody = response.getBody();
-
-        // Логируем полученный ответ
         logger.info("Received response: " + responseBody);
 
         if (response.getStatusCode() == HttpStatus.OK) {
             try {
-                // Парсим ответ и извлекаем список языков
                 JsonNode rootNode = objectMapper.readTree(response.getBody());
                 JsonNode languagesNode = rootNode.path("data").path("languages");
-
-                // Преобразуем JsonNode в TreeMap<String, String>
                 TreeMap<String, String> languagesMap = new TreeMap<>();
                 for (JsonNode languageNode : languagesNode) {
                     languagesMap.put(languageNode.path("language").asText(),
                             languageNode.path("name").asText());
                 }
-
                 return languagesMap;
             } catch (IOException e) {
-                // Бросаем исключение при ошибке парсинга
                 throw new RuntimeException("Ошибка парсинга", e);
             }
         } else {
-            // Бросаем исключение при неудачной попытке получить список языков
             throw new RuntimeException("Не удалось получить список языков: " + response.getStatusCode() + " " + response.getBody());
         }
     }
-
-    // Проверяем, поддерживается ли данный язык
     public boolean isNotSupported(String languageCode) {
         return !availableLanguages.containsKey(languageCode);
     }
-
-    @Recover // Выполнится, если ни одна из попыток не сработает
+    @Recover
     public TreeMap<String, String> recover(Exception e) {
-        logger.error("Не удалось получить список языков после повторных попыток", e);
+        logger.error("Не удалось получить список языков после нескольких попыток", e);
         return new TreeMap<>();
     }
 }

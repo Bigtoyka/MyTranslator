@@ -34,18 +34,18 @@ public class TranslationController {
     public ResponseEntity<String> translate(@RequestBody TranslationRequestBody request,
                                             @RequestHeader(value = "X-Forwarded-For", defaultValue = "127.0.0.1") String ipAddress) {
         if (languageService.isNotSupported(request.getSource())) {
-            return ResponseEntity.badRequest().body("Не найден язык исходного сообщения");
+            return ResponseEntity.badRequest().body("http " + HttpStatus.BAD_REQUEST.value() + " Не найден язык исходного сообщения");
         }
 
         if (languageService.isNotSupported(request.getTarget())) {
-            return ResponseEntity.badRequest().body("Не найден целевой язык сообщения");
+            return ResponseEntity.badRequest().body("http " + HttpStatus.BAD_REQUEST.value() + " Не найден целевой язык сообщения");
         }
         try {
             String translatedText = translationService.translate(request.getQ(), request.getSource(), request.getTarget(), ipAddress);
             return ResponseEntity.ok(translatedText);
         } catch (Exception e) {
             logger.error("Ошибка доступа к ресурсу перевода ", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Ошибка доступа к ресурсу перевода");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("http " + HttpStatus.INTERNAL_SERVER_ERROR.value() + " Ошибка доступа к ресурсу перевода");
         }
     }
 }
