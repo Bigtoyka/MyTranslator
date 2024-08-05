@@ -15,7 +15,8 @@
             request_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
         ```
-    - В файле `application.properties` ввести свой порт в localhost и название DB, логин и пароль:
+    - В файле директории resources в файле `application.properties` в localhost ввести вместо "5432" свой порт и название DB вместо "YOUR_DB", 
+   логин и пароль от базы данных вместо YOUR_USERNAME и YOUR_PASSWORD соответственно:
         ```properties
         spring.datasource.url=jdbc:postgresql://localhost:5432/YOUR_DB
         spring.datasource.username=YOUR_USERNAME
