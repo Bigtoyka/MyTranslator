@@ -2,7 +2,7 @@
 
 ## Руководство
 1. Настроить подключение к Google Translator API:
-   в файле `application.properties` в rapidapi.key вставить свой ключ
+   В директории resources в файле `application.properties` в rapidapi.key вставить свой ключ
 
 2. Настроить подключение к базе данных PostgreSQL:
     - Создать таблицу:
@@ -15,7 +15,7 @@
             request_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
         ```
-    - В файле директории resources в файле `application.properties` в localhost ввести вместо "5432" свой порт и название DB вместо "YOUR_DB", 
+    - В директории resources в файле `application.properties` в localhost ввести вместо "5432" свой порт и название DB вместо "YOUR_DB", 
    логин и пароль от базы данных вместо YOUR_USERNAME и YOUR_PASSWORD соответственно:
         ```properties
         spring.datasource.url=jdbc:postgresql://localhost:5432/YOUR_DB
