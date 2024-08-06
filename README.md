@@ -5,7 +5,7 @@
    В директории resources в файле `application.properties` в rapidapi.key вставить свой ключ
 
 2. Настроить подключение к базе данных PostgreSQL:
-    - Создать таблицу:
+    - Создать таблицу в PostgreSQL:
         ```sql
         CREATE TABLE translation_requests (
             id BIGSERIAL PRIMARY KEY,
